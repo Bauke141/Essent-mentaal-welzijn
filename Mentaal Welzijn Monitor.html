@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Essent | Mentaal Welzijn Dashboard</title>
+    <!-- Chart.js laden voor de grafieken -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* --- Essent Huisstijl & Reset --- */
+        :root {
+            --essent-magenta: #e6007e;
+            --essent-magenta-hover: #c4006b;
+            --essent-dark: #2d2946;
+            --essent-grey: #f3f3f3;
+            --text-color: #333;
+            --white: #ffffff;
+            --success: #28a745;
+            --warning: #ffc107;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--essent-grey);
+            color: var(--text-color);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* --- Sidebar --- */
+        .sidebar {
+            width: 250px;
+            background-color: var(--essent-dark);
+            color: var(--white);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            position: fixed;
+            height: 100%;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 40px;
+            color: var(--essent-magenta);
+            letter-spacing: -1px;
+        }
+        
+        .logo span { color: var(--white); }
+
+        .nav-item {
+            padding: 12px 15px;
+            margin-bottom: 5px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-item.active {
+            background-color: var(--essent-magenta);
+            color: white;
+        }
+
+        /* --- Main Content --- */
+        .main-content {
+            margin-left: 250px;
+            flex: 1;
+            padding: 30px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            color: var(--essent-dark);
+        }
+
+        .date-filter {
+            background: var(--white);
+            padding: 10px 20px;
+            border-radius: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--essent-dark);
+            cursor: pointer;
+        }
+
+        /* --- Dashboard Grid --- */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        /* --- Cards --- */
+        .card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+        }
+
+        .card h3 {
+            font-size: 14px;
+            color: #888;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .card .value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--essent-dark);
+            margin-bottom: 5px;
+        }
+
+        .card .delta {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .positive { color: var(--success); }
+        .negative { color: #dc3545; } /* Rood voor negatief */
+        
+        /* Specifieke kleur voor verzuim (laag is goed) */
+        .verzuim-goed { color: var(--success); } 
+
+        /* --- Legend --- */
+        .comparison-legend {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            width: fit-content;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .dot-pilot { background-color: var(--essent-magenta); }
+        .dot-control { background-color: #a0a0a0; }
+
+        /* --- Charts Layout --- */
+        .chart-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .chart-row.reverse {
+            grid-template-columns: 1fr 2fr;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+
+        .btn-action {
+            background-color: var(--essent-magenta);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-action:hover {
+            background-color: var(--essent-magenta-hover);
+        }
+        
+        /* Interactive Tabs inside card */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 15px;
+        }
+        
+        .tab {
+            padding: 8px 15px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            color: #888;
+            border-bottom: 2px solid transparent;
+        }
+        
+        .tab.active {
+            color: var(--essent-magenta);
+            border-bottom: 2px solid var(--essent-magenta);
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo">essent<span>.</span></div>
+        <div class="nav-item active">Dashboard</div>
+        <div class="nav-item">Rapportages</div>
+        <div class="nav-item">Medewerkers</div>
+        <div class="nav-item">Campagnes</div>
+        <div class="nav-item">Instellingen</div>
+        
+        <div style="margin-top: auto; font-size: 12px; color: #aaa;">
+            Laatste update: <br> 24 mei 2024
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        
+        <!-- Header -->
+        <div class="header">
+            <div>
+                <h1>Mentaal Welzijn Monitor</h1>
+                <p style="color: #666;">Effectmeting vitaliteitsinitiatieven</p>
+            </div>
+            <div class="date-filter" onclick="alert('Hier zou een kalender openen.')">
+                📅 Q1 & Q2 2024 ▾
+            </div>
+            <button class="btn-action" onclick="downloadReport()">Download Rapportage</button>
+        </div>
+
+        <!-- Legend -->
+        <div class="comparison-legend">
+            <div class="legend-item">
+                <span class="dot dot-pilot"></span> Pilot Groep (Met initiatieven)
+            </div>
+            <div class="legend-item">
+                <span class="dot dot-control"></span> Bestaande Medewerkers (Controle)
+            </div>
+        </div>
+
+        <!-- KPI Cards (Quick Stats) -->
+        <div class="dashboard-grid">
+            <!-- Verzuim -->
+            <div class="card">
+                <h3>Verzuim Percentage (Impact)</h3>
+                <div class="value">2.4% <span style="font-size: 16px; color: #888;">vs 4.8%</span></div>
+                <div class="delta verzuim-goed">▼ 50% lager in pilot groep</div>
+                <div style="font-size:11px; color:#aaa; margin-top:5px;">Target: < 3.5%</div>
+            </div>
+
+            <!-- eNPS -->
+            <div class="card">
+                <h3>Employee NPS</h3>
+                <div class="value">+42 <span style="font-size: 16px; color: #888;">vs +18</span></div>
+                <div class="delta positive">▲ Significante stijging</div>
+                <div style="font-size:11px; color:#aaa; margin-top:5px;">Branche gemiddelde: +25</div>
+            </div>
+
+            <!-- Your Voice -->
+            <div class="card">
+                <h3>Your Voice: Welzijn Score</h3>
+                <div class="value">8.6 <span style="font-size: 16px; color: #888;">/ 10</span></div>
+                <div class="delta positive">▲ +1.2 t.o.v. controle</div>
+                <div style="font-size:11px; color:#aaa; margin-top:5px;">Interne survey score</div>
+            </div>
+
+            <!-- Coach Trajecten -->
+            <div class="card">
+                <h3>Coach Doorverwijzingen</h3>
+                <div class="value">28 <span style="font-size: 16px; color: #888;">trajecten</span></div>
+                <div class="delta positive">Actief preventief beleid</div>
+                <div style="font-size:11px; color:#aaa; margin-top:5px;">Conversie vanuit spreekuur</div>
+            </div>
+        </div>
+
+        <!-- Row 1: Charts -->
+        <div class="chart-row">
+            <!-- Main Line Chart: Verzuim verloop -->
+            <div class="card">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                    <h3>Verloop Verzuimpercentage (YTD)</h3>
+                    <div class="tabs">
+                        <div class="tab active">Verzuim</div>
+                        <div class="tab" onclick="alert('Wissel naar Burn-out risico data')">Burn-out risico</div>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="verzuimChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Doughnut Chart: Ambassadeurs -->
+            <div class="card">
+                <h3>Adoptie Ambassadeurs</h3>
+                <div class="chart-container" style="height: 200px; margin-top: 20px;">
+                    <canvas id="ambassadeurChart"></canvas>
+                </div>
+                <div style="text-align:center; margin-top:20px;">
+                    <p style="font-size:13px; color:#666;"><strong>85%</strong> van de pilot teams heeft<br>een actieve welzijns-ambassadeur.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Row 2: Charts -->
+        <div class="chart-row reverse">
+            <!-- Bar Chart: Doorverwijzingen -->
+            <div class="card">
+                <h3>Type Doorverwijzingen (Interventies)</h3>
+                <div class="chart-container">
+                    <canvas id="referralChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Radar/Bar Chart: Your Voice Detail -->
+            <div class="card">
+                <h3>'Your Voice' Detail Scores</h3>
+                <div class="chart-container">
+                    <canvas id="voiceChart"></canvas>
+                </div>
+                <div style="font-size: 12px; color: #666; margin-top: 10px;">
+                    * Pilot groep scoort opvallend hoger op 'Werk-Privé balans' en 'Support'.
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Script for Charts -->
+    <script>
+        // Kleuren definities
+        const colorPilot = '#e6007e'; // Essent Magenta
+        const colorPilotLight = 'rgba(230, 0, 126, 0.1)';
+        const colorControl = '#a0a0a0'; // Grijs
+        const colorControlLight = 'rgba(160, 160, 160, 0.1)';
+        const colorDark = '#2d2946';
+
+        // 1. Verzuim Line Chart
+        const ctxVerzuim = document.getElementById('verzuimChart').getContext('2d');
+        new Chart(ctxVerzuim, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mrt', 'Apr', 'Mei', 'Jun'],
+                datasets: [
+                    {
+                        label: 'Pilot Groep',
+                        data: [4.2, 3.8, 3.1, 2.8, 2.5, 2.4],
+                        borderColor: colorPilot,
+                        backgroundColor: colorPilotLight,
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true
+                    },
+                    {
+                        label: 'Bestaande Medewerkers',
+                        data: [4.5, 4.6, 4.7, 4.5, 4.8, 4.8],
+                        borderColor: colorControl,
+                        backgroundColor: 'transparent',
+                        borderWidth: 2,
+                        borderDash: [5, 5],
+                        tension: 0.4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false } // We gebruiken onze eigen legenda bovenin
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: { display: true, text: 'Verzuim %' },
+                        grid: { color: '#f0f0f0' }
+                    },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+
+        // 2. Ambassadeur Chart (Doughnut)
+        const ctxAmb = document.getElementById('ambassadeurChart').getContext('2d');
+        new Chart(ctxAmb, {
+            type: 'doughnut',
+            data: {
+                labels: ['Met Ambassadeur', 'Zonder Ambassadeur'],
+                datasets: [{
+                    data: [85, 15],
+                    backgroundColor: [colorPilot, '#eee'],
+                    borderWidth: 0,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '75%',
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.label + ': ' + context.parsed + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // 3. Referral Chart (Bar) - Interne doorverwijzingen
+        const ctxRef = document.getElementById('referralChart').getContext('2d');
+        new Chart(ctxRef, {
+            type: 'bar',
+            data: {
+                labels: ['Bedrijfsarts', 'Coach (Mentaal)', 'Fysio', 'Financieel Advies'],
+                datasets: [
+                    {
+                        label: 'Pilot Groep (per 100 mdw)',
+                        data: [2, 12, 5, 3], // Hoge score op coach want preventief
+                        backgroundColor: colorPilot,
+                        borderRadius: 4
+                    },
+                    {
+                        label: 'Controle Groep (per 100 mdw)',
+                        data: [6, 3, 4, 1], // Hoger bij bedrijfsarts (vaak te laat)
+                        backgroundColor: colorControl,
+                        borderRadius: 4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom' }
+                },
+                scales: {
+                    y: { beginAtZero: true, grid: { color: '#f0f0f0' } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+
+        // 4. Your Voice Chart (Radar) - Survey Scores
+        const ctxVoice = document.getElementById('voiceChart').getContext('2d');
+        new Chart(ctxVoice, {
+            type: 'bar', // Bar is vaak duidelijker dan radar voor vergelijking
+            data: {
+                labels: ['Werkdruk', 'Autonomie', 'Sociale Steun', 'Veiligheid', 'Feedback'],
+                datasets: [
+                    {
+                        label: 'Pilot Groep',
+                        data: [8.2, 8.5, 9.0, 8.8, 8.4],
+                        backgroundColor: colorPilot,
+                        borderRadius: 4
+                    },
+                    {
+                        label: 'Controle Groep',
+                        data: [6.5, 7.2, 7.0, 7.5, 6.8],
+                        backgroundColor: colorControl,
+                        borderRadius: 4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y', // Horizontale bar chart
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    x: { 
+                        min: 0, max: 10,
+                        grid: { color: '#f0f0f0' }
+                    },
+                    y: { grid: { display: false } }
+                }
+            }
+        });
+
+        // Functie voor download knop interactie
+        function downloadReport() {
+            const btn = document.querySelector('.btn-action');
+            const originalText = btn.innerText;
+            btn.innerText = 'Genereren...';
+            btn.style.backgroundColor = '#2d2946';
+            
+            setTimeout(() => {
+                alert('Het rapport "Effectmeting_Q1_Q2.pdf" is gedownload.');
+                btn.innerText = originalText;
+                btn.style.backgroundColor = '';
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
