@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grow with Essent - Inside Story Sessions</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        /* --- GENERAL SETTINGS --- */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #1a1a1a;
+            background-color: #fff;
+        }
+
+        a { text-decoration: none; color: inherit; }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        /* --- HEADER --- */
+        header {
+            border-bottom: 1px solid #e0e0e0;
+            padding: 20px 0;
+            background: white;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-links a {
+            margin-right: 25px;
+            font-size: 15px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .logo {
+            color: #d6006e; /* Essent Pink */
+            font-weight: bold;
+            font-size: 24px;
+            font-style: italic;
+        }
+
+        .header-icons i {
+            margin-left: 25px;
+            cursor: pointer;
+            color: #333;
+            font-size: 18px;
+        }
+
+        /* --- HERO SECTION (Main Page) --- */
+        .hero-section {
+            padding-bottom: 20px;
+            padding-top: 30px;
+            position: relative;
+        }
+
+        .hero-top-row {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 10px;
+        }
+
+        .btn-outline {
+            border: 1px solid #007bff;
+            color: #007bff;
+            background: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: 10px;
+            transition: background 0.2s;
+        }
+
+        .btn-outline:hover { background: #f0f8ff; }
+
+        h1 {
+            font-size: 42px;
+            margin: 0 0 20px 0;
+            color: #111;
+        }
+
+        .meta-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .avatar-circle {
+            width: 40px;
+            height: 40px;
+            background-color: #fce4ec;
+            color: #d6006e;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .hero-description {
+            line-height: 1.8;
+            color: #444;
+            font-size: 16px;
+            max-width: 900px;
+            margin-bottom: 40px;
+        }
+
+        /* --- TOGGLE SWITCH --- */
+        .toggle-wrapper {
+            margin-bottom: 30px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 30px;
+        }
+
+        .toggle-container {
+            display: inline-flex;
+            background-color: #f0f0f0;
+            border-radius: 30px;
+            padding: 5px;
+        }
+
+        .toggle-btn {
+            background: transparent;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #555;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-btn.active {
+            background-color: #d6006e;
+            color: white;
+            box-shadow: 0 2px 8px rgba(214, 0, 110, 0.3);
+        }
+
+        /* --- CARDS GRID --- */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
+            gap: 30px;
+            padding-bottom: 80px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            border-radius: 12px;
+            overflow: hidden;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            border: 1px solid #f0f0f0;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .card-thumbnail {
+            height: 200px;
+            position: relative;
+            background-size: cover;
+            background-position: center;
+            background-color: #ddd;
+        }
+
+        .card-tag {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .card-bookmark {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(0,0,0,0.6);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .play-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 48px;
+            height: 48px;
+            background: #007bff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .duration-badge {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            background: white;
+            color: #333;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .card-title {
+            padding: 20px;
+            font-weight: bold;
+            font-size: 18px;
+            line-height: 1.4;
+        }
+
+        /* --- SPECIAL CARD STYLES --- */
+        .bg-red {
+            background-color: #d1285e !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            background-image: none !important;
+        }
+        .bg-red h2 { color: white; font-family: 'Impact', sans-serif; font-size: 38px; margin: 0; text-transform: uppercase; letter-spacing: 1px; z-index: 2; }
+        .arrow-graphic { color: white; font-size: 50px; margin-top: 5px; transform: rotate(-10deg); }
+
+        /* Updated Unplugged Card Style - Now with Image */
+        .bg-unplugged {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            color: white;
+            text-align: center;
+            position: relative;
+        }
+        
+        /* Dark overlay so text pops on top of image */
+        .bg-unplugged::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(45, 0, 77, 0.7); /* Purple/Dark tint */
+            z-index: 1;
+        }
+
+        .bg-unplugged * {
+            z-index: 2; /* Ensure text is above overlay */
+        }
+
+        .bg-unplugged h2 { 
+            font-family: 'Impact', sans-serif; 
+            font-size: 34px; 
+            margin: 10px 0 0 0; 
+            text-transform: uppercase; 
+            letter-spacing: 2px; 
+            line-height: 0.9; 
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+        .bg-unplugged span { 
+            font-size: 12px; 
+            letter-spacing: 3px; 
+            text-transform: uppercase; 
+            opacity: 0.9; 
+        }
+        .unplugged-icon { 
+            font-size: 30px; 
+            margin-top: 15px; 
+            color: white; 
+            background: #d6006e;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+        }
+
+
+        /* --- DETAIL PAGE STYLES --- */
+        .detail-page-container {
+            padding-top: 20px;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: #666;
+            font-weight: 600;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+        .back-btn:hover { color: #d6006e; }
+
+        .detail-header {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .detail-header-text h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+            line-height: 1.1;
+            color: #d6006e; /* Pink Title */
+        }
+        
+        .detail-subtitle {
+            font-size: 24px;
+            font-weight: 300;
+            color: #555;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        .detail-image img {
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+            object-fit: cover;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .detail-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr; /* Main Content | Sidebar */
+            gap: 50px;
+        }
+
+        .content-block h3 {
+            font-size: 22px;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            color: #1a1a1a;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+
+        .content-block p {
+            line-height: 1.7;
+            color: #444;
+            font-size: 16px;
+        }
+
+        .check-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .check-list li {
+            position: relative;
+            padding-left: 30px;
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .check-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #d6006e;
+            font-weight: bold;
+        }
+
+        .program-list {
+            counter-reset: my-counter;
+            list-style: none;
+            padding: 0;
+        }
+        .program-list li {
+            position: relative;
+            padding-left: 40px;
+            margin-bottom: 15px;
+        }
+        .program-list li::before {
+            counter-increment: my-counter;
+            content: counter(my-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 25px;
+            height: 25px;
+            background: #eef5ff;
+            color: #007bff;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 25px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        /* Sidebar Box */
+        .info-box {
+            background: #f9f9f9;
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid #e0e0e0;
+            position: sticky;
+            top: 100px; /* Sticks when scrolling */
+        }
+        .info-box h4 { margin-top: 0; font-size: 18px; color: #d6006e; }
+        .info-row { display: flex; gap: 10px; margin-bottom: 15px; align-items: flex-start; }
+        .info-row i { color: #888; margin-top: 4px; }
+        .cta-button {
+            display: block;
+            background: #d6006e;
+            color: white;
+            text-align: center;
+            padding: 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            margin-top: 20px;
+            transition: background 0.3s;
+            border: none;
+            width: 100%;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .cta-button:hover { background: #b0005a; }
+
+        /* Utility */
+        .hidden { display: none !important; }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container header-content">
+            <nav class="nav-links">
+                <a href="#" onclick="hideDetailPage()">Ontdek</a>
+                <a href="#">Mijn dashboard</a>
+                <a href="#">Bibliotheek</a>
+            </nav>
+            <div class="logo">grow with essent</div>
+            <div class="header-icons">
+                <i class="fas fa-search"></i>
+                <i class="far fa-bell"></i>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+
+        <!-- ================= MAIN VIEW (HERO + GRID) ================= -->
+        <div id="main-view">
+            <section class="hero-section">
+                <div class="hero-top-row">
+                    <button class="btn-outline"><i class="fas fa-link"></i> Kopieer link</button>
+                    <button class="btn-outline"><i class="far fa-bookmark"></i> Favoriet</button>
+                </div>
+
+                <h1 contenteditable="true">Strengthen yourself!</h1>
+                
+                <div class="meta-info">
+                    <div class="avatar-circle">GE</div>
+                    <div>
+                        <strong>Samengesteld door Grow with Essent</strong><br>
+                        <span style="color: #666;">Laatst bijgewerkt: 17 feb 2025</span>
+                    </div>
+                </div>
+
+                <div class="hero-description" contenteditable="true">
+                    <p>Hoe wordt of blijf je mentaal veerkrachtig? Ontdek tips om je welzijn te verbeteren. Gebruik de schakelaar hieronder om specifieke inhoud te zien.</p>
+                </div>
+                
+                <div class="toggle-wrapper">
+                    <div class="toggle-container">
+                        <button id="btn-employees" class="toggle-btn active" onclick="showEmployees()">Medewerkers</button>
+                        <button id="btn-managers" class="toggle-btn" onclick="showManagers()">Leidinggevenden</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- EMPLOYEES GRID -->
+            <section id="grid-employees" class="cards-grid">
+                <div class="card">
+                    <div class="card-thumbnail bg-red">
+                        <div class="card-tag"><i class="far fa-file-alt"></i> Document</div>
+                        <div class="card-bookmark"><i class="far fa-bookmark"></i></div>
+                        <h2>INSPIRATION</h2>
+                        <div class="arrow-graphic">⤹</div> 
+                        <div class="play-icon" style="background: #2d89ef;"><i class="fas fa-download"></i></div>
+                        <div class="duration-badge">5 minuten</div>
+                    </div>
+                    <div class="card-title">Introduction & Inspiration</div>
+                </div>
+
+                <div class="card">
+                    <div class="card-thumbnail" style="background-image: url('https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&w=600&q=80');">
+                        <div class="card-tag"><i class="fas fa-user-tie"></i> Masterclass</div>
+                        <div class="card-bookmark"><i class="far fa-bookmark"></i></div>
+                        <div class="play-icon"><i class="fas fa-play"></i></div>
+                        <div class="duration-badge">26m 10s</div>
+                    </div>
+                    <div class="card-title">Creëer de juiste balans tussen werk</div>
+                </div>
+
+                <div class="card">
+                    <div class="card-thumbnail" style="background-image: url('https://images.unsplash.com/photo-1517649763962-0c623066013b?ixlib=rb-4.0.3&w=600&q=80');">
+                        <div class="card-tag"><i class="fas fa-user-tie"></i> Masterclass</div>
+                        <div class="card-bookmark"><i class="far fa-bookmark"></i></div>
+                        <div class="play-icon"><i class="fas fa-play"></i></div>
+                        <div class="duration-badge">28m 15s</div>
+                    </div>
+                    <div class="card-title">Rust in je hoofd, rust in je leven</div>
+                </div>
+            </section>
+
+            <!-- MANAGERS GRID -->
+            <section id="grid-managers" class="cards-grid hidden">
+                
+                <!-- ESSENT UNPLUGGED CARD (Now with Image Background) -->
+                <!-- I used a similar image here. You can change the URL to your own image if you wish. -->
+                <div class="card" onclick="showDetailPage()">
+                    <div class="card-thumbnail bg-unplugged" style="background-image: url('https://images.unsplash.com/photo-1577962917302-cd874c4e31d2?ixlib=rb-4.0.3&w=600&q=80'); background-size: cover; background-position: center;">
+                        <div class="card-tag"><i class="fas fa-microphone-alt"></i> Sessie</div>
+                        <div class="card-bookmark"><i class="far fa-bookmark"></i></div>
+                        
+                        <span>Storytellers</span>
+                        <h2>ESSENT<br>UNPLUGGED</h2>
+                        <div class="unplugged-icon"><i class="fas fa-microphone-lines"></i></div>
+                        
+                        <div class="duration-badge">45 minuten</div>
+                    </div>
+                    <div class="card-title">Inside Story Sessions: Kwetsbaar en Verbindend</div>
+                </div>
+
+                <div class="card">
+                    <div class="card-thumbnail" style="background-image: url('https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&w=600&q=80');">
+                        <div class="card-tag"><i class="fas fa-users"></i> Leadership</div>
+                        <div class="card-bookmark"><i class="far fa-bookmark"></i></div>
+                        <div class="play-icon"><i class="fas fa-play"></i></div>
+                        <div class="duration-badge">32m 00s</div>
+                    </div>
+                    <div class="card-title">Team meetings effectief leiden</div>
+                </div>
+
+                <div class="card">
+                    <div class="card-thumbnail" style="background-image: url('https://images.unsplash.com/photo-1517048676732-d65bc937f952?ixlib=rb-4.0.3&w=600&q=80');">
+                        <div class="card-tag"><i class="fas fa-comments"></i> Skills</div>
+                        <div class="card-bookmark"><i class="far fa-bookmark"></i></div>
+                        <div class="play-icon"><i class="fas fa-play"></i></div>
+                        <div class="duration-badge">22m 10s</div>
+                    </div>
+                    <div class="card-title">Feedback geven en ontvangen</div>
+                </div>
+            </section>
+        </div>
+        <!-- ================= END MAIN VIEW ================= -->
+
+
+        <!-- ================= DETAIL PAGE ================= -->
+        <div id="detail-page" class="detail-page-container hidden">
+            
+            <!-- Back Button -->
+            <div class="back-btn" onclick="hideDetailPage()">
+                <i class="fas fa-arrow-left"></i> Terug naar overzicht
+            </div>
+
+            <!-- Detail Header -->
+            <div class="detail-header">
+                <div class="detail-header-text">
+                    <h1>Inside Story Sessions</h1>
+                    <div class="detail-subtitle">Kwetsbaar. Herkenbaar. Verbindend.</div>
+                    <p style="font-size: 18px; color: #555;">
+                        Een inspirerende sessie waarin een collega een persoonlijk verhaal deelt over mentale druk en herstel.
+                    </p>
+                </div>
+                <div class="detail-image">
+                    <!-- IMAGE UPDATE: Used a high-quality office meeting placeholder -->
+                    <!-- You can replace this URL with your local file like: src="meeting.jpg" -->
+                    <img src="https://images.unsplash.com/photo-1577962917302-cd874c4e31d2?ixlib=rb-4.0.3&w=1000&q=80" alt="Meeting at Essent">
+                </div>
+            </div>
+
+            <!-- Detail Content & Sidebar -->
+            <div class="detail-layout">
+                
+                <!-- Main Text Content -->
+                <div class="detail-content" contenteditable="true">
+                    
+                    <div class="content-block">
+                        <h3>Beschrijving</h3>
+                        <p>Inside Story Session is een korte, veilige en inspirerende sessie waarin een Essent-collega zijn of haar persoonlijke ervaring deelt met mentale druk, veerkracht en herstel.</p>
+                        <p>Door open te spreken over uitdagingen die vaak onzichtbaar blijven, ontstaat ruimte voor herkenning, begrip en moedige gesprekken binnen teams.</p>
+                    </div>
+
+                    <div class="content-block">
+                        <h3>Waarom meedoen?</h3>
+                        <ul class="check-list">
+                            <li>De drempel om over mentale gezondheid te praten wordt lager</li>
+                            <li>Verbindt teams en vergroot psychologische veiligheid</li>
+                            <li>Je ontdekt dat niemand alleen is in mentale uitdagingen</li>
+                        </ul>
+                    </div>
+
+                    <div class="content-block">
+                        <h3>Programma</h3>
+                        <ul class="program-list">
+                            <li><strong>Introductie</strong><br>Door HSE of teamlead (5 min)</li>
+                            <li><strong>Het Ervaringsverhaal</strong><br>De bezoeker deelt een eerlijk verhaal (10–15 min)</li>
+                            <li><strong>Mini-dialoog</strong><br>In kleine groepjes: "Herkennen jullie dit?"</li>
+                            <li><strong>Afsluiting</strong><br>Tips & tools om veerkracht te vergroten</li>
+                        </ul>
+                    </div>
+
+                </div>
+
+                <!-- Right Sidebar Info Box -->
+                <div class="sidebar">
+                    <div class="info-box">
+                        <h4>Praktische Info</h4>
+                        <div class="info-row">
+                            <i class="far fa-clock"></i>
+                            <div>
+                                <strong>Duur</strong><br>45 minuten
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <i class="fas fa-users"></i>
+                            <div>
+                                <strong>Voor wie</strong><br>Alle teams
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <div>
+                                <strong>Locatie</strong><br>Wordt vooraf bekendgemaakt
+                            </div>
+                        </div>
+                        
+                        <button class="cta-button">Inschrijven</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <!-- ================= END DETAIL PAGE ================= -->
+
+    </main>
+
+    <!-- SCRIPTS -->
+    <script>
+        // Toggle between Employees and Managers on main page
+        function showEmployees() {
+            document.getElementById('btn-employees').classList.add('active');
+            document.getElementById('btn-managers').classList.remove('active');
+            document.getElementById('grid-employees').classList.remove('hidden');
+            document.getElementById('grid-managers').classList.add('hidden');
+        }
+
+        function showManagers() {
+            document.getElementById('btn-employees').classList.remove('active');
+            document.getElementById('btn-managers').classList.add('active');
+            document.getElementById('grid-employees').classList.add('hidden');
+            document.getElementById('grid-managers').classList.remove('hidden');
+        }
+
+        // SHOW THE DETAIL PAGE
+        function showDetailPage() {
+            // Hide main view
+            document.getElementById('main-view').classList.add('hidden');
+            // Show detail page
+            document.getElementById('detail-page').classList.remove('hidden');
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        // HIDE THE DETAIL PAGE (Go Back)
+        function hideDetailPage() {
+            // Show main view
+            document.getElementById('main-view').classList.remove('hidden');
+            // Hide detail page
+            document.getElementById('detail-page').classList.add('hidden');
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+    </script>
+
+</body>
+</html>
